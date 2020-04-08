@@ -20,7 +20,7 @@ class MyApp extends StatelessWidget {
         primaryColor: Colors.grey,
       ),
       home: CupertinoPageScaffold(
-          navigationBar: CupertinoNavigationBar(
+          navigationBar: const CupertinoNavigationBar(
             middle: Text('Flutter Count Up Chess Clock App'),
           ),
           child: SafeArea(child: MyHomePage())),
@@ -35,7 +35,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   Timer timer;
-  var timeL, timeR;
+  dynamic timeL, timeR;
   Stopwatch stR = Stopwatch();
   Stopwatch stL = Stopwatch();
   bool isPlayingL = false;
@@ -45,10 +45,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   void initState() {
-    timer = Timer.periodic(Duration(milliseconds: 10), (timer) {
-      setState(() {
-
-      });
+    timer = Timer.periodic(const Duration(milliseconds: 10), (Timer timer) {
+      setState(() {});
     });
     stL.reset();
     stR.reset();
@@ -91,8 +89,8 @@ class _MyHomePageState extends State<MyHomePage> {
                             ),
                     ),
                   ),
-                  SizedBox(
-                    height: 50.0,
+                  const SizedBox(
+                    height: 50,
                   ),
                   CupertinoButton(
                     color: isPlayingL ? Colors.pink : Colors.blue,
@@ -113,7 +111,9 @@ class _MyHomePageState extends State<MyHomePage> {
                         stR.start();
                       }
                     },
-                    child: isPlayingL ? Text('Running') : Text('Stopping'),
+                    child: isPlayingL
+                        ? const Text('Running')
+                        : const Text('Stopping'),
                   ),
                 ],
               ),
@@ -135,8 +135,8 @@ class _MyHomePageState extends State<MyHomePage> {
                           ),
                   ),
                 ),
-                SizedBox(
-                  height: 50.0,
+                const SizedBox(
+                  height: 50,
                 ),
                 CupertinoButton(
                   color: isPlayingR ? Colors.pink : Colors.blue,
@@ -157,7 +157,9 @@ class _MyHomePageState extends State<MyHomePage> {
                       stL.start();
                     }
                   },
-                  child: isPlayingR ? Text('Running') : Text('Stopping'),
+                  child: isPlayingR
+                      ? const Text('Running')
+                      : const Text('Stopping'),
                 ),
               ],
             ),

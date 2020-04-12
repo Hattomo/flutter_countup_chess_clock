@@ -15,7 +15,7 @@ class MyApp extends StatelessWidget {
         DefaultWidgetsLocalizations.delegate,
       ],
       debugShowCheckedModeBanner: false,
-      theme: CupertinoThemeData(
+      theme: const CupertinoThemeData(
         //brightness: Brightness.dark,
         primaryColor: Colors.grey,
       ),
@@ -169,7 +169,7 @@ class _MyHomePageState extends State<MyHomePage> {
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: CupertinoButton(
         color: Colors.red,
-        child: buttonState ? Icon(Icons.stop) : Icon(Icons.pause),
+        child: buttonState ? const Icon(Icons.stop) : const Icon(Icons.pause),
         onPressed: () {
           if (buttonState == false) {
             stL.stop();

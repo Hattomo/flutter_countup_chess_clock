@@ -45,7 +45,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   void initState() {
-    timer = Timer.periodic(const Duration(milliseconds: 10), (Timer timer) {
+    timer = Timer.periodic(const Duration(milliseconds: 100), (Timer timer) {
       setState(() {});
     });
     stL.reset();
@@ -80,12 +80,12 @@ class _MyHomePageState extends State<MyHomePage> {
                     child: Center(
                       child: isRunning
                           ? Text(
-                              '$timeL',
-                              style: Theme.of(context).textTheme.headline4,
+                              '${timeL.inHours.toString().padLeft(2, '0')}:${(timeL.inMinutes%60).toString().padLeft(2, '0')}:${(timeL.inSeconds%60).toString().padLeft(2, '0')}',
+                              style: Theme.of(context).textTheme.headline2,
                             )
                           : Text(
-                              '0:00:00.000000',
-                              style: Theme.of(context).textTheme.headline4,
+                              '00:00:00',
+                              style: Theme.of(context).textTheme.headline2,
                             ),
                     ),
                   ),
@@ -126,12 +126,12 @@ class _MyHomePageState extends State<MyHomePage> {
                   child: Center(
                     child: isRunning
                         ? Text(
-                            '$timeR',
-                            style: Theme.of(context).textTheme.headline4,
+                            '${timeR.inHours.toString().padLeft(2, '0')}:${(timeR.inMinutes%60).toString().padLeft(2, '0')}:${(timeR.inSeconds%60).toString().padLeft(2, '0')}',
+                            style: Theme.of(context).textTheme.headline2,
                           )
                         : Text(
-                            '0:00:00.000000',
-                            style: Theme.of(context).textTheme.headline4,
+                            '00:00:00',
+                            style: Theme.of(context).textTheme.headline2,
                           ),
                   ),
                 ),

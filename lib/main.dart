@@ -35,22 +35,28 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   Timer timer;
-  dynamic timeL, timeR;
-  Stopwatch stR = Stopwatch();
-  Stopwatch stL = Stopwatch();
-  bool isPlayingL = false;
-  bool isPlayingR = false;
-  bool isRunning = false;
-  bool buttonState = false;
+  static int number = 2;
+  dynamic time = List<dynamic>.generate(number, (int index) => null);
+  List<Stopwatch> st =
+      List<Stopwatch>.generate(number, (int index) => Stopwatch());
+  int mode = -1;
+  int old = -100;
 
   @override
   void initState() {
-    timer = Timer.periodic(const Duration(milliseconds: 100), (Timer timer) {
-      setState(() {});
-    });
-    stL.reset();
-    stR.reset();
     super.initState();
+    timer = Timer.periodic(const Duration(milliseconds: 300), (Timer timer) {
+      if (mode != -1 && mode != -2) {
+        setState(() {
+        });
+      }
+    });
+
+    for (int i = 0; i < number; i++) {
+      setState(() {
+        st[i].reset();
+      });
+    }
   }
 
   @override
@@ -60,12 +66,47 @@ class _MyHomePageState extends State<MyHomePage> {
     super.dispose();
   }
 
+  void changeTimer() {
+    if (0 <= old) {
+      st[old].stop();
+      st[mode].start();
+    } else {
+      st[mode].start();
+    }
+  }
+
+  void modeChange() {
+    switch (mode) {
+      case -1: //not working, stop
+        for (int i = 0; i < number; i++) {
+          st[i].stop();
+          st[i].reset();
+        }
+        break;
+      case -2: //pause
+        for (int i = 0; i < number; i++) {
+          st[i].stop();
+        }
+        break;
+      case -3: //reset
+        for (int i = 0; i < number; i++) {
+          st[i].reset();
+        }
+        setState(() {
+          mode = -1;
+        });
+        break;
+      default:
+        changeTimer();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    if (isRunning) {
-      timeL = stL.elapsed;
-      timeR = stR.elapsed;
+    for (int i = 0; i < number; i++) {
+      time[i] = st[i].elapsed;
     }
+    //print(mode);
     return Scaffold(
       body: Center(
         child: Row(
@@ -78,9 +119,9 @@ class _MyHomePageState extends State<MyHomePage> {
                   Container(
                     width: MediaQuery.of(context).size.width / 2,
                     child: Center(
-                      child: isRunning
+                      child: mode != -1
                           ? Text(
-                              '${timeL.inHours.toString().padLeft(2, '0')}:${(timeL.inMinutes%60).toString().padLeft(2, '0')}:${(timeL.inSeconds%60).toString().padLeft(2, '0')}',
+                              '${time[0].inHours.toString().padLeft(2, '0')}:${(time[0].inMinutes % 60).toString().padLeft(2, '0')}:${(time[0].inSeconds % 60).toString().padLeft(2, '0')}',
                               style: Theme.of(context).textTheme.headline2,
                             )
                           : Text(
@@ -93,25 +134,15 @@ class _MyHomePageState extends State<MyHomePage> {
                     height: 50,
                   ),
                   CupertinoButton(
-                    color: isPlayingL ? Colors.pink : Colors.blue,
+                    color: st[0].isRunning ? Colors.pink : Colors.blue,
                     onPressed: () {
-                      if (isRunning == false) {
-                        isRunning = true;
-                        isPlayingL = true;
-                        stL.start();
-                        buttonState = false;
-                      } else if (buttonState == true && isRunning == true) {
-                        isPlayingL = true;
-                        stL.start();
-                        buttonState = false;
-                      } else if (isRunning == true && isPlayingL == true) {
-                        isPlayingL = false;
-                        isPlayingR = true;
-                        stL.stop();
-                        stR.start();
-                      }
+                      setState(() {
+                        old = mode;
+                        mode = 0;
+                        modeChange();
+                      });
                     },
-                    child: isPlayingL
+                    child: mode == 0
                         ? const Text('Running')
                         : const Text('Stopping'),
                   ),
@@ -124,9 +155,9 @@ class _MyHomePageState extends State<MyHomePage> {
                 Container(
                   width: MediaQuery.of(context).size.width / 2,
                   child: Center(
-                    child: isRunning
+                    child: mode != -1
                         ? Text(
-                            '${timeR.inHours.toString().padLeft(2, '0')}:${(timeR.inMinutes%60).toString().padLeft(2, '0')}:${(timeR.inSeconds%60).toString().padLeft(2, '0')}',
+                            '${time[1].inHours.toString().padLeft(2, '0')}:${(time[1].inMinutes % 60).toString().padLeft(2, '0')}:${(time[1].inSeconds % 60).toString().padLeft(2, '0')}',
                             style: Theme.of(context).textTheme.headline2,
                           )
                         : Text(
@@ -139,25 +170,15 @@ class _MyHomePageState extends State<MyHomePage> {
                   height: 50,
                 ),
                 CupertinoButton(
-                  color: isPlayingR ? Colors.pink : Colors.blue,
+                  color: st[1].isRunning ? Colors.pink : Colors.blue,
                   onPressed: () {
-                    if (isRunning == false) {
-                      isRunning = true;
-                      isPlayingR = true;
-                      buttonState = false;
-                      stR.start();
-                    } else if (buttonState == true && isRunning == true) {
-                      isPlayingR = true;
-                      stR.start();
-                      buttonState = false;
-                    } else if (isRunning == true && isPlayingR == true) {
-                      isPlayingR = false;
-                      isPlayingL = true;
-                      stR.stop();
-                      stL.start();
-                    }
+                    setState(() {
+                      old = mode;
+                      mode = 1;
+                      modeChange();
+                    });
                   },
-                  child: isPlayingR
+                  child: st[1].isRunning
                       ? const Text('Running')
                       : const Text('Stopping'),
                 ),
@@ -169,22 +190,20 @@ class _MyHomePageState extends State<MyHomePage> {
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: CupertinoButton(
         color: Colors.red,
-        child: buttonState ? const Icon(Icons.stop) : const Icon(Icons.pause),
+        child: mode == -2 ? const Icon(Icons.stop) : const Icon(Icons.pause),
         onPressed: () {
-          if (buttonState == false) {
-            stL.stop();
-            stR.stop();
-            isPlayingL = false;
-            isPlayingR = false;
-            buttonState = true;
-          } else if (buttonState == true) {
-            stL.stop();
-            stR.stop();
-            stL.reset();
-            stR.reset();
-            isRunning = false;
-            isPlayingL = false;
-            isPlayingR = false;
+          if (0 <= mode) {
+            setState(() {
+              old = mode;
+              mode = -2;
+              modeChange();
+            });
+          } else if (mode == -2) {
+            setState(() {
+              old = mode;
+              mode = -3;
+              modeChange();
+            });
           }
         },
       ),

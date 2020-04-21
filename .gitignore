@@ -39,5 +39,9 @@ app.*.symbols
 # Obfuscation related
 app.*.map.json
 
+# windows and linux are still early technical preview
+/windows
+/linux
+
 # Exceptions to above rules.
 !/packages/flutter_tools/test/data/dart_dependencies_test/**/.packages
